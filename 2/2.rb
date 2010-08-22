@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 class LCD
   # Sections are labeled top-to-bottom, left-to-right, like so:
   #            
@@ -107,4 +109,16 @@ class LCD
       horiz_row(number, 6)
     end.join(SEPARATOR)
   end
+end
+
+if __FILE__ == $0
+  if ARGV.index("-s")
+    size = ARGV[ARGV.index("-s") + 1].to_i
+    text = ARGV[ARGV.index("-s") + 2]
+  else
+    size = LCD::DEFAULT_SIZE
+    text = ARGV[0]
+  end
+
+  puts LCD.new(text).print(size)
 end
