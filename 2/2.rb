@@ -1,6 +1,5 @@
 class LCD
-  
-  NUMBERS = [
+  NUMBER_SECTIONS = [
     [true,  true,  true, false, true,  true,  true],
     [false, false, true, false, false, true,  false],
     [true,  false, true, true,  true,  false, true],
@@ -15,6 +14,10 @@ class LCD
   
   DEFAULT_SIZE = 2
   
+  HORIZ_SEGMENT = "-"
+  VERT_SEGMENT  = "|"
+  SEPARATOR     = " "
+  
   def initialize(string)
     @numbers = string.scan(/\d/).map {|i| i.to_i }
   end
@@ -24,45 +27,62 @@ class LCD
     
     output = []
     
-    output << @numbers.map {|number| row0(number)}.join(" ")
+    output << row0(@numbers)
     
     @size.times do
-      output << @numbers.map{|number| row1(number)}.join(" ")
+      output << row1(@numbers)
     end
     
-    output << @numbers.map{|number| row2(number)}.join(" ")
+    output << row2(@numbers)
 
     @size.times do
-      output << @numbers.map{|number| row3(number)}.join(" ")
+      output << row3(@numbers)
     end
     
-    output << @numbers.map{|number| row4(number)}.join(" ")
+    output << row4(@numbers)
     
     output.join("\n")
   end
 
-  def row0(number)
-    " " + (str_for_section(number, 0) * @size) + " "
+  def row0(numbers)
+    numbers.map do |number|
+      SEPARATOR + (str_for_section(number, 0) * @size) + SEPARATOR
+    end.join(SEPARATOR)
+  end
+  
+  def str_type_for_section(section)
+    [0,3,6].include?(section) ? HORIZ_SEGMENT : VERT_SEGMENT
+  end
+  
+  def lit_for_section(number, section)
+    NUMBER_SECTIONS[number][section]
   end
   
   def str_for_section(number, section)
-    string_for_section = [0,3,6].include?(section) ? "-" : "|"
-    NUMBERS[number][section] ? string_for_section : " "
+   lit_for_section(number, section) ? str_type_for_section(section) : SEPARATOR
   end
 
-  def row1(number)
-    str_for_section(number, 1) + (" " * @size) + str_for_section(number, 2)
+  def row1(numbers)
+    numbers.map do |number|
+      str_for_section(number, 1) + (SEPARATOR * @size) + str_for_section(number, 2)
+    end.join(SEPARATOR)
   end
   
-  def row2(number)
-    " " + str_for_section(number, 3) * @size + " "
+  def row2(numbers)
+    numbers.map do |number|
+      SEPARATOR + str_for_section(number, 3) * @size + SEPARATOR
+    end.join(SEPARATOR)
   end
   
-  def row3(number)
-    str_for_section(number, 4) + (" " * @size) + str_for_section(number, 5)
+  def row3(numbers)
+    numbers.map do |number|
+      str_for_section(number, 4) + (SEPARATOR * @size) + str_for_section(number, 5)
+    end.join(SEPARATOR)
   end
   
-  def row4(number)
-    " " + str_for_section(number, 6) * @size + " "
+  def row4(numbers)
+    numbers.map do |number|
+      SEPARATOR + str_for_section(number, 6) * @size + SEPARATOR
+    end.join(SEPARATOR)
   end
 end
