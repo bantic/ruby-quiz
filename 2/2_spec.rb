@@ -73,17 +73,17 @@ EOS
  - 
 EOS
     nine_text = nine_text.chomp
-    
-    LCD.print("0", :size => 1).should == zero_text.chomp
-    LCD.print("1", :size => 1).should == one_text.chomp
-    LCD.print("2", :size => 1).should == two_text.chomp
-    LCD.print("3", :size => 1).should == three_text.chomp
-    LCD.print("4", :size => 1).should == four_text.chomp
-    LCD.print("5", :size => 1).should == five_text.chomp
-    LCD.print("6", :size => 1).should == six_text.chomp
-    LCD.print("7", :size => 1).should == seven_text.chomp
-    LCD.print("8", :size => 1).should == eight_text.chomp
-    LCD.print("9", :size => 1).should == nine_text.chomp
+               
+    LCD.new("0").print(1).should == zero_text.chomp
+    LCD.new("1").print(1).should == one_text.chomp
+    LCD.new("2").print(1).should == two_text.chomp
+    LCD.new("3").print(1).should == three_text.chomp
+    LCD.new("4").print(1).should == four_text.chomp
+    LCD.new("5").print(1).should == five_text.chomp
+    LCD.new("6").print(1).should == six_text.chomp
+    LCD.new("7").print(1).should == seven_text.chomp
+    LCD.new("8").print(1).should == eight_text.chomp
+    LCD.new("9").print(1).should == nine_text.chomp
   end
   
   it "should print correctly with size == 2" do
@@ -117,9 +117,9 @@ EOS
  -- 
 EOS
         
-        LCD.print("0", :size => 2).should == zero_text.chomp
-        LCD.print("1", :size => 2).should == one_text.chomp
-        LCD.print("2", :size => 2).should == two_text.chomp
+        LCD.new("0").print(2).should == zero_text.chomp
+        LCD.new("1").print(2).should == one_text.chomp
+        LCD.new("2").print(2).should == two_text.chomp
   end
   
   it "should print multiple numbers ok" do
@@ -132,6 +132,6 @@ EOS
 |  |    |
  --      
 EOS
-    LCD.print("01", :size => 2).should == zero_one_text.chomp
+    LCD.new("01").print(2).should == zero_one_text.chomp
   end
 end

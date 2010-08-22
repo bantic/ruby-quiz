@@ -1,6 +1,22 @@
-module LCD
-  
-  NUMBERS = [
+class LCD
+  # Sections are labeled top-to-bottom, left-to-right, like so:
+  #            
+  #     --0-- 
+  #    |     |
+  #    |     |
+  #    1     2
+  #    |     |
+  #    |     |
+  #     --3-- 
+  #    |     |
+  #    |     |
+  #    4     5
+  #    |     |
+  #    |     |
+  #     --6--
+  #
+
+  NUMBER_SECTIONS = [
     [true,  true,  true, false, true,  true,  true],
     [false, false, true, false, false, true,  false],
     [true,  false, true, true,  true,  false, true],
@@ -15,55 +31,80 @@ module LCD
   
   DEFAULT_SIZE = 2
   
-  class << self
-    def print(string, opts={})
-      size = opts[:size] || DEFAULT_SIZE
-      
-      numbers = string.scan(/\d/).map {|i| i.to_i }
-
-      output = []
-      
-      
-      output << numbers.map {|number| row0(number, size)}.join(" ")
-      
-      size.times do
-        output << numbers.map{|number| row1(number, size)}.join(" ")
-      end
-      
-      output << numbers.map{|number| row2(number, size)}.join(" ")
-
-      size.times do
-        output << numbers.map{|number| row3(number, size)}.join(" ")
-      end
-      
-      output << numbers.map{|number| row4(number, size)}.join(" ")
-      
-      output.join("\n")
-    end
+  HORIZ_SEGMENT = "-"
+  VERT_SEGMENT  = "|"
+  SEPARATOR     = " "
   
-    def row0(number, size=DEFAULT_SIZE)
-      " " + (str_for_section(number, 0) * size) + " "
-    end
-    
-    def str_for_section(number, section)
-      string_for_section = [0,3,6].include?(section) ? "-" : "|"
-      NUMBERS[number][section] ? string_for_section : " "
-    end
+  def initialize(string)
+    @numbers = string.scan(/\d/).map {|i| i.to_i }
+  end
   
-    def row1(number, size=DEFAULT_SIZE)
-      str_for_section(number, 1) + (" " * size) + str_for_section(number, 2)
-    end
+  def print(size=DEFAULT_SIZE)
+    @size = size
     
-    def row2(number, size=DEFAULT_SIZE)
-      " " + str_for_section(number, 3) * size + " "
-    end
+    output = []
     
-    def row3(number, size=DEFAULT_SIZE)
-      str_for_section(number, 4) + (" " * size) + str_for_section(number, 5)
+    output << row0(@numbers)
+    @size.times do
+      output << row1(@numbers)
     end
-    
-    def row4(number, size=DEFAULT_SIZE)
-      " " + str_for_section(number, 6) * size + " "
+    output << row2(@numbers)
+    @size.times do
+      output << row3(@numbers)
     end
+    output << row4(@numbers)
+    output.join("\n")
+  end
+
+  def lit_for_section(number, section)
+    NUMBER_SECTIONS[number][section]
+  end
+
+  def str_type_for_section(section)
+    [0,3,6].include?(section) ? HORIZ_SEGMENT : VERT_SEGMENT
+  end
+
+  def str_for_section(number, section)
+   lit_for_section(number, section) ? str_type_for_section(section) : SEPARATOR
+  end
+
+  def horiz_row(number, section)
+    SEPARATOR + (str_for_section(number, section) * @size) + SEPARATOR
+  end
+  
+  def vert_row(number, section_left, section_right)
+    str_for_section(number, section_left) + 
+      (SEPARATOR * @size) + 
+      str_for_section(number, section_right)
+  end
+
+  def row0(numbers)
+    numbers.map do |number|
+      horiz_row(number, 0)
+    end.join(SEPARATOR)
+  end
+  
+  def row1(numbers)
+    numbers.map do |number|
+      vert_row(number, 1, 2)
+    end.join(SEPARATOR)
+  end
+  
+  def row2(numbers)
+    numbers.map do |number|
+      horiz_row(number, 3)
+    end.join(SEPARATOR)
+  end
+  
+  def row3(numbers)
+    numbers.map do |number|
+      vert_row(number, 4, 5)
+    end.join(SEPARATOR)
+  end
+  
+  def row4(numbers)
+    numbers.map do |number|
+      horiz_row(number, 6)
+    end.join(SEPARATOR)
   end
 end
