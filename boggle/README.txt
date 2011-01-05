@@ -1,0 +1,1 @@
+Inspired by http://learnruby.com/boggle/index.shtml
