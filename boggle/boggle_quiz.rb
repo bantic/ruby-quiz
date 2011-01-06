@@ -3,7 +3,7 @@ class Boggle
   DEFAULT_MIN_LENGTH = 3
   
   def self.word_dictionary_file
-    @@word_dictionary_file = "/usr/share/dict/words"
+    @@word_dictionary_file ||= "/usr/share/dict/words"
   end
   
   def self.matches_word?(word_fragment)
@@ -25,11 +25,18 @@ class Boggle
     end
   end
   
+  def words(opts={})
+    letter_sequences(opts.merge({:words => true}))
+    @words
+  end
+  
   def letter_sequences(opts={})
     @max_length = opts[:max_length] || DEFAULT_MAX_LENGTH
     @min_length = opts[:min_length] || DEFAULT_MIN_LENGTH
+    @only_include_words = opts[:words] || false
     @visited_paths = []
     @found_paths   = []
+    @words         = []
     follow_path([[0,0]]).collect do |path|
       path.collect {|tuple| self[*tuple]}
     end
@@ -94,24 +101,25 @@ class Boggle
       [ col_idx + 1, row_idx - 1]
     end
     
-    puts "dir: #{dir}. cur tuple: #{current_tuple.inspect}. next tuple: #{next_tuple.inspect}. letter? #{ self[*next_tuple]}. path: #{path.inspect}. path includes? #{path.include?(next_tuple)}. paths: #{@visited_paths.inspect}<br />\n"
-    
     return unless self[ *next_tuple ]
     if !path.include?(next_tuple)
-      puts "path didn't include #{next_tuple.inspect}. current @visited_paths: #{@visited_paths.inspect}<br>"
       path << next_tuple
-      puts "new path: #{path.inspect}<br>"
-      puts "current @visited_paths: #{@visited_paths.inspect}<br>"
       if !@visited_paths.include?(path)
+        text = path.collect{|tuple| self[*tuple]}.join
         if path.size >= @min_length
-          @found_paths << path
+          if @only_include_words && Boggle.word_exists?(text)
+            @found_paths << path
+            @words       << text
+          else
+            @found_paths << path
+          end
         end
         @visited_paths << path
-        puts "@visited_paths didn't include the new path. new @visited_paths: #{@visited_paths.inspect}. RETURNING!<Br>"
-        return follow_path(path)
-      else
-        puts "@visited_paths included new path. @visited_paths: #{@visited_paths.inspect}. new path: #{path.inspect}"
-        return nil
+        if @only_include_words && !Boggle.matches_word?(text)
+          return
+        else
+          return follow_path(path)
+        end
       end
     end
   end

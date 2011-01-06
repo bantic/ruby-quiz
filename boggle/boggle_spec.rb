@@ -39,14 +39,20 @@ describe Boggle do
   
   context "solving boards" do
     before(:each) do
-      @b1 = Boggle.new( ["b","a"],
-                      ["h","t"])
       @b2 = Boggle.new( ["b","a","r"],
                         ["h","t","k"],
-                        [""])
+                        ["c","d","e"])
     end
-    it "should do something" do
-      
+    it "should find words" do
+      words = @b2.words
+      words.should include("bat")
+      words.should include("bath")
+      words.should include("batch")
+      words.should include("bark")
+    end
+    it "should find words with min length" do
+      words = @b2.words(:min_length => 5)
+      words.each {|w| w.length.should >= 5}
     end
   end
   
@@ -77,7 +83,7 @@ describe Boggle do
       end
     end
     
-    it "should accept max length" do
+    it "should accept max_length" do
       letter_sequences = @b.letter_sequences(:max_length => 3)
       letter_sequences.each do |sequence|
         sequence.size.should <= 3
