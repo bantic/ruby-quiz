@@ -35,30 +35,18 @@ class Boggle
     end
   end
   
-  DIRECTIONS = ["E","S","W","N","NE", "SE", "NW", "SW"]
+  DIRECTIONS = ["E","S","W","N"] #,"NE", "SE", "NW", "SW"]
   
   private
   
   def follow_path(path)
     path = path.dup
     return @found_paths if path.empty?
-    right_paths = follow_path_right(path)
-    if right_paths.nil?
-      puts "right paths nil, checking down<br>"
-      down_paths  = follow_path_down(path)
-      if down_paths.nil?
-        puts "down paths nil, checking left<br>"
-        left_paths  = follow_path_left(path)
-        if left_paths.nil?
-          puts "left paths nil, checking up<br>"
-          up_paths    = follow_path_up(path)
-          if up_paths.nil?
-            puts "up paths nil, popping path and trying again<br>"
-            path.pop
-            puts "path: #{path.inspect}. paths: #{@visited_paths.inspect}"
-            return follow_path(path)
-          end
-        end
+    DIRECTIONS.each do |direction|
+      new_paths = follow_path_dir(path, direction)
+      if new_paths.nil? && direction == DIRECTIONS.last
+        path.pop
+        return follow_path(path)
       end
     end
   end
@@ -96,6 +84,14 @@ class Boggle
       [ col_idx, row_idx + 1 ]
     when "W"
       [ col_idx - 1, row_idx ]
+    when "NW"
+      [ col_idx - 1, row_idx - 1]
+    when "NE"
+      [ col_idx + 1, row_idx - 1]
+    when "SE"
+      [ col_idx + 1, row_idx + 1]
+    when "SW"
+      [ col_idx + 1, row_idx - 1]
     end
     
     puts "dir: #{dir}. cur tuple: #{current_tuple.inspect}. next tuple: #{next_tuple.inspect}. letter? #{ self[*next_tuple]}. path: #{path.inspect}. path includes? #{path.include?(next_tuple)}. paths: #{@visited_paths.inspect}<br />\n"
