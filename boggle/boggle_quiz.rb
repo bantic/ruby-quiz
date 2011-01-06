@@ -35,7 +35,7 @@ class Boggle
     end
   end
   
-  DIRECTIONS = ["E","S","W","N"] #,"NE", "SE", "NW", "SW"]
+  DIRECTIONS = ["E","S","W","N","NE", "SE", "NW", "SW"]
   
   private
   
@@ -87,7 +87,7 @@ class Boggle
     when "NW"
       [ col_idx - 1, row_idx - 1]
     when "NE"
-      [ col_idx + 1, row_idx - 1]
+      [ col_idx - 1, row_idx + 1]
     when "SE"
       [ col_idx + 1, row_idx + 1]
     when "SW"

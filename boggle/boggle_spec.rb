@@ -59,23 +59,15 @@ describe Boggle do
       letter_sequences = @b.letter_sequences(:min_length => 2)
       letter_sequences.should include(["a","b"])
       letter_sequences.should include(["a","b","f"])
+      letter_sequences.should include(["a","f"])
+      letter_sequences.should include(["a","f","b"])
+      letter_sequences.should include(["a","f","b","e"])
       letter_sequences.should include(["a","b","f","e"])
       letter_sequences.should include(["a","e"])
+      letter_sequences.should include(["a","e","b"])
+      letter_sequences.should include(["a","e","b","f"])
       letter_sequences.should include(["a","e","f"])
       letter_sequences.should include(["a","e","f","b"])
-
-      # letter_sequences.should include(["a","b"])
-      # letter_sequences.should include(["a","b","f"])
-      # letter_sequences.should include(["a","f"])
-      # letter_sequences.should include(["a","f","b"])
-      # letter_sequences.should include(["a","f","b","e"])
-      # letter_sequences.should include(["a","b","f","e"])
-      # letter_sequences.should include(["a","e"])
-      # letter_sequences.should include(["a","e","b"])
-      # letter_sequences.should include(["a","e","b","f"])
-      # letter_sequences.should include(["a","e","f"])
-      # letter_sequences.should include(["a","e","f","b"])
-
     end
     
     it "should accept min_length" do
