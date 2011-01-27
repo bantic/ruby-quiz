@@ -1,6 +1,15 @@
+begin
+  require 'json'
+rescue LoadError => e
+  require "rubygems"
+  require "json"
+end
+
 class Boggle
   DEFAULT_MAX_LENGTH = 10
   DEFAULT_MIN_LENGTH = 3
+  
+  attr_accessor :found_paths, :words
   
   def self.word_dictionary_file
     @@word_dictionary_file ||= "/usr/share/dict/words"
@@ -16,6 +25,10 @@ class Boggle
   
   def initialize(*val_array)
     @rows = *val_array
+  end
+  
+  def to_json
+    @rows.to_json
   end
   
   def [](col_idx, row_idx)
@@ -37,7 +50,13 @@ class Boggle
     @visited_paths = []
     @found_paths   = []
     @words         = []
-    follow_path([[0,0]]).collect do |path|
+    0.upto(@rows.size - 1).each do |row_idx|
+      0.upto(@rows[0].size - 1).each do |col_idx|
+        follow_path([[col_idx, row_idx]])
+      end
+    end
+    
+    @found_paths.collect do |path|
       path.collect {|tuple| self[*tuple]}
     end
   end
@@ -57,23 +76,6 @@ class Boggle
       end
     end
   end
-  
-  def follow_path_right(path)
-    follow_path_dir(path, "E")
-  end
-
-  def follow_path_up(path)
-    follow_path_dir(path, "N")
-  end
-
-  def follow_path_down(path)
-    follow_path_dir(path, "S")
-  end
-
-  def follow_path_left(path)
-    follow_path_dir(path, "W")
-  end
-
   
   def follow_path_dir(path, dir)
     return nil if path.size >= @max_length

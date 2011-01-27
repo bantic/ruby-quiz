@@ -23,6 +23,12 @@ describe Boggle do
     @b[0,-1].should be_nil
   end
   
+  context "#to_json" do
+    it "should give a good json output" do
+      @b.to_json.should == "[[\"a\",\"b\",\"c\",\"d\"],[\"e\",\"f\",\"g\",\"h\"],[\"i\",\"j\",\"k\",\"l\"],[\"m\",\"n\",\"o\",\"p\"]]"
+    end
+  end
+  
   context "word matching" do
     it "should match starts words" do
       Boggle.matches_word?("absten").should be_true
@@ -49,10 +55,22 @@ describe Boggle do
       words.should include("bath")
       words.should include("batch")
       words.should include("bark")
+      words.should include("chat")
     end
     it "should find words with min length" do
       words = @b2.words(:min_length => 5)
       words.each {|w| w.length.should >= 5}
+    end
+    it "should find these words" do
+      boggle = Boggle.new(%w{s e e o},
+                          %w{h k s l},
+                          %w{o c u t},
+                          %w{e j k i})
+      words = boggle.words(:min_length => 4)
+      words.should include("seek")
+      words.should include("skeo")
+      words.should include("shock")
+      words.should include("shoe")
     end
   end
   
