@@ -5,6 +5,16 @@ b = Boggle.new(%w{n u s l},
 %w{m u a i},
 %w{a s m g})
 
+b = Boggle.new( ["b","a","r"],
+                  ["h","t","k"],
+                  ["c","d","e"])
+
+b = Boggle.new( ["b","a"],
+                  ["h","t"])
+
+
+$stdout.sync = true
+
 puts "Solving boggle board..."
 puts "Board: #{b.to_json}"
 b.words(:min_length => 4)
@@ -12,6 +22,7 @@ puts "done."
 
 tile_hash = {}
 
+puts "Found #{b.found_words.size} words."
 puts "Found #{b.found_paths.size} paths."
 
 b.found_paths.each_with_index do |path, idx|
