@@ -1,16 +1,19 @@
 require File.dirname(__FILE__) + "/boggle_quiz"
 
+# Board: [["x","u","e","t"],["w","i","o","v"],["i","t","o","y"],["f","o","s","o"]]
+# var boggle_tiles = [["b","a","r"],["h","t","k"],["c","d","e"]];
+
 b = Boggle.new(%w{n u s l},
 %w{r x n i},
 %w{m u a i},
 %w{a s m g})
 
-b = Boggle.new( ["b","a","r"],
-                  ["h","t","k"],
-                  ["c","d","e"])
-
-b = Boggle.new( ["b","a"],
-                  ["h","t"])
+# b = Boggle.new( ["b","a","r"],
+#                   ["h","t","k"],
+#                   ["c","d","e"])
+# 
+# b = Boggle.new( ["b","a"],
+#                   ["h","t"])
 
 
 $stdout.sync = true
@@ -22,11 +25,7 @@ puts "done."
 
 tile_hash = {}
 
-puts "Found #{b.found_words.size} words."
-puts "Found #{b.found_paths.size} paths."
-
 b.found_paths.each_with_index do |path, idx|
-  puts idx if idx % 10 == 0
   path.each do |tile|
     col_idx, row_idx = tile[0], tile[1]
     tile_hash[col_idx] ||= {}
@@ -35,9 +34,6 @@ b.found_paths.each_with_index do |path, idx|
   end
 end
 
-puts "Paths: #{b.found_paths.inspect}"
-
-puts "Tile hash: #{tile_hash.inspect}"
 tile_array = []
 tile_hash.each do |col, row_hash|
   row_hash.each do |row, heat|
@@ -45,8 +41,6 @@ tile_hash.each do |col, row_hash|
     tile_array[col][row] = heat
   end
 end
-
-puts "Tile array: #{tile_array.inspect}"
 
 max = tile_array.flatten.max
 min = tile_array.flatten.min
@@ -59,4 +53,8 @@ tile_array.each_with_index do |row_arr, col|
   end
 end
 
-puts "Tile array scaled: #{tile_array_scaled.inspect}"
+b.words.each {|w| puts w}
+
+puts "var boggle_tiles = #{b.to_json};"
+puts "var boggle_heats = #{tile_array_scaled.to_json};"
+puts "var boggle_paths = #{b.found_paths.to_json};"

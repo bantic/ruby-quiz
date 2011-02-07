@@ -1,5 +1,11 @@
-require 'trie'
-require 'json'
+begin
+  require 'trie'
+  require 'json'
+rescue LoadError
+  require 'rubygems'
+  require 'trie'
+  require 'json'
+end
 
 class Boggle
   DEFAULT_MAX_LENGTH = 10

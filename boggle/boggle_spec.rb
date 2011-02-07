@@ -1,7 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 $stdout.sync
-puts [1,2,3,4].to_json
 
 describe Boggle do
   context "basic" do
