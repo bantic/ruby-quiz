@@ -1,44 +1,101 @@
 begin
-  require 'trie'
+  require 'mongo'
+  require 'trie' # fast_trie http://rubygems.org/gems/fast_trie
   require 'json'
+  require 'redis'
 rescue LoadError
   require 'rubygems'
+  require 'mongo'
   require 'trie'
   require 'json'
+  require 'redis'
 end
+
+require "./redis_trie"
 
 class Boggle
   DEFAULT_MAX_LENGTH = 10
   DEFAULT_MIN_LENGTH = 3
   
+  TRIE_TYPE = "mongo" # fast_trie, mongo, redis
+  
   attr_accessor :found_paths, :found_words
   
   def self.word_dictionary_file
-    @@word_dictionary_file ||= "/usr/share/dict/words"
+    @@word_dictionary_file ||= "/usr/share/dict/scrabble"
   end
   
   def self.trie
     @@trie ||= begin
       puts "Loading trie..."
       t = Trie.new
-      File.open("/usr/share/dict/words") do |f|
+      File.open(word_dictionary_file) do |f|
         f.each_line do |word|
           t.add word.strip.downcase
         end
       end
+      @@timer = Time.now
       puts "done loading trie."
       t
     end
   end
   
+  def self.timer
+    @@timer
+  end
+  
+  def self.mongo
+    @@mongo ||= begin
+      puts "Seeding mongo"
+      db = Mongo::Connection.new.db("boggle-words")
+      coll = db.collection("words")
+      coll.ensure_index([['word', 1]])
+      if coll.count() == 0
+        File.open(word_dictionary_file) do |f|
+          f.each_line do |word|
+            coll.insert :word => word.strip.downcase
+          end
+        end
+      end
+      @@timer = Time.now
+      puts "Done seeding mongo"
+      coll
+    end
+  end
+  
+  def self.redis
+    @@redis ||= begin
+      puts "Seeding redis"
+      r = RedisTrie.new(word_dictionary_file)
+      @@timer = Time.now
+      puts "done"
+      r
+    end
+  end
+  
   def self.matches_word?(word_fragment)
     return false if word_fragment.nil? || word_fragment == ""
-    !trie.children(word_fragment.downcase).empty?
+    
+    case TRIE_TYPE
+    when "mongo"
+      !mongo.find_one(:word => /^#{word_fragment.downcase}/).nil?
+    when "fast_trie"
+      !trie.children(word_fragment.downcase).empty?
+    when "redis"
+      redis.matches_word?(word_fragment.downcase)
+    end
   end
   
   def self.word_exists?(full_word)
     return false if full_word.nil? || full_word == ""
-    trie.has_key?(full_word.downcase)
+    case TRIE_TYPE
+    when "mongo"
+      !mongo.find_one(:word => full_word.downcase).nil?
+    when "fast_trie"
+      trie.has_key?(full_word.downcase)
+    when "redis"
+      redis.word_exists?(full_word.downcase)
+    end
   end
   
   def initialize(*val_array)

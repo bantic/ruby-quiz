@@ -3,24 +3,47 @@ require File.dirname(__FILE__) + "/boggle_quiz"
 # Board: [["x","u","e","t"],["w","i","o","v"],["i","t","o","y"],["f","o","s","o"]]
 # var boggle_tiles = [["b","a","r"],["h","t","k"],["c","d","e"]];
 
-b = Boggle.new(%w{n u s l},
-%w{r x n i},
-%w{m u a i},
-%w{a s m g})
+# b = Boggle.new(%w{n u s l},
+# %w{r x n i},
+# %w{m u a i},
+# %w{a s m g})
 
 # b = Boggle.new( ["b","a","r"],
 #                   ["h","t","k"],
 #                   ["c","d","e"])
-# 
+
+b = Boggle.new(                  %w{S E R S},
+                  		%w{P A T G},
+                  		%w{L I N E},
+                  		%w{S E R S})
 # b = Boggle.new( ["b","a"],
 #                   ["h","t"])
 
+b = Boggle.new(
+%w{E T B T},
+%w{S I H O},
+%w{C T E L},
+%w{O E Z V}
+)
+
+b = Boggle.new(
+%w{P O L V},
+%w{E S A I},
+%w{M A X E},
+%w{Y Z N O})
+
+b = Boggle.new(
+%w{E N L E},
+%w{O S Y E},
+%w{H O E F},
+%w{G H A W})
 
 $stdout.sync = true
 
 puts "Solving boggle board..."
 puts "Board: #{b.to_json}"
 b.words(:min_length => 4)
+puts "took: #{Time.now - Boggle.timer}s"
 puts "done."
 
 tile_hash = {}
